@@ -13,7 +13,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        cpp/main.cpp
+        cpp/main.cpp  \
+        cpp/board.cpp \
+
+HEADERS += \
+        cpp/board.hpp      \
+        cpp/board_view.hpp \
+        cpp/helper.hpp     \
+
 
 RESOURCES += qml.qrc
 
