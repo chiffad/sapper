@@ -13,8 +13,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        cpp/main.cpp        \
-        cpp/board_logic.cpp \
+        cpp/board_entry_model.cpp \
+        cpp/board_logic.cpp       \
+        cpp/main.cpp              \
 
 HEADERS += \
         cpp/board_entry_model.hpp \

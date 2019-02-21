@@ -1,9 +1,12 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-
 #include "board_logic.hpp"
 #include "board_entry_model.hpp"
 
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QtQuick/QQuickView>
+
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -11,15 +14,12 @@ int main(int argc, char *argv[])
 
   QGuiApplication app(argc, argv);
 
-
-  qmlRegisterType<sapper::BoardEntryModel>("board.model", 1, 0, "BoardEntryModel");
-
-
-//  sapper::board_logic_t b;
+  sapper::BoardEntryModel board;
   QQmlApplicationEngine engine;
-  engine.load(QUrl(QStringLiteral("qrc:/res/main.qml")));
-  if (engine.rootObjects().isEmpty())
-      return -1;
+  engine.rootContext()->setContextProperty("BoardEntryModel", &board);
+  engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+
+  if(engine.rootObjects().isEmpty()) return -1;
 
   return app.exec();
 }

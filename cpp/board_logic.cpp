@@ -93,7 +93,7 @@ board_logic_t::impl_t::impl_t()
 
 board_t board_logic_t::impl_t::get_board() const
 {
-  return opened_board;
+  return board;//opened_board;
 }
 
 void board_logic_t::impl_t::open_field(const coord_t& /*pos*/)
