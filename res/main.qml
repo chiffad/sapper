@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import board.model 1.0
 
 Window
 {
@@ -7,20 +8,14 @@ Window
   visibility: Window.FullScreen
   title: qsTr("Hello World")
 
-  Rectangle
+  ListView
   {
-    id: rect
+    id: view
     anchors.fill: parent
-    property bool foo: false
-    color: foo ? "blue" : "green"
-
-    MouseArea
+    model: BoardEntryModel {}
+    delegate: Text
     {
-      anchors.fill: parent
-      onClicked:
-      {
-        rect.foo  = !rect.foo;
-      }
+      text: model.display
     }
   }
 }

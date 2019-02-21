@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 
 #include "board_logic.hpp"
+#include "board_entry_model.hpp"
+
 
 int main(int argc, char *argv[])
 {
@@ -10,7 +12,10 @@ int main(int argc, char *argv[])
   QGuiApplication app(argc, argv);
 
 
-  sapper::board_logic_t b;
+  qmlRegisterType<sapper::BoardEntryModel>("board.model", 1, 0, "BoardEntryModel");
+
+
+//  sapper::board_logic_t b;
   QQmlApplicationEngine engine;
   engine.load(QUrl(QStringLiteral("qrc:/res/main.qml")));
   if (engine.rootObjects().isEmpty())

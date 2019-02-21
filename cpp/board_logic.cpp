@@ -82,7 +82,7 @@ board_logic_t::impl_t::impl_t()
   for(size_t i = 0; i < board.size(); ++i)
   {
     if(board[i] == ELEMENT::bomb) str.push_back("b");
-    else str.push_back(QString::number(static_cast<int>(board[i])));
+    else str.push_back(static_cast<char>(board[i]));
 
     str.push_back(' ');
 

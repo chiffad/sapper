@@ -17,9 +17,9 @@ SOURCES += \
         cpp/board_logic.cpp \
 
 HEADERS += \
-        cpp/board_logic.hpp \
-        cpp/board_view.hpp  \
-        cpp/helper.hpp      \
+        cpp/board_entry_model.hpp \
+        cpp/board_logic.hpp       \
+        cpp/helper.hpp            \
 
 
 RESOURCES += qml.qrc
