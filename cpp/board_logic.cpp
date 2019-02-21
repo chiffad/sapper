@@ -1,8 +1,15 @@
-#include "board.hpp"
+#include "board_logic.hpp"
 
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <utility>
+
+//DBG
+/*
+#include <QDebug>
+#include <QString>
+*/
 
 
 namespace
@@ -24,6 +31,7 @@ struct board_logic_t::impl_t
   impl_t();
   board_t get_board() const;
   void open_field(const coord_t& pos);
+  void mark_field(const coord_t& pos, bool bomb);
 
   void generate_field();
   std::vector<coord_t> get_around_not_bomb_fields(const coord_t& c) const;
@@ -51,6 +59,11 @@ void board_logic_t::open_field(const coord_t& pos)
 {
   impl->open_field(pos);
 }
+
+void board_logic_t::mark_field(const coord_t& pos, bool bomb)
+{
+  impl->mark_field(pos, bomb);
+}
 ///
 
 /////////////////////////////////////////////////////////
@@ -58,9 +71,24 @@ void board_logic_t::open_field(const coord_t& pos)
 board_logic_t::impl_t::impl_t()
 {
   std::srand(std::time(nullptr));
-  generate_field();
   board.fill(ELEMENT::empty);
   opened_board.fill(ELEMENT::hidden);
+
+  generate_field();
+
+  //DBG
+  /*
+  QString str;
+  for(size_t i = 0; i < board.size(); ++i)
+  {
+    if(board[i] == ELEMENT::bomb) str.push_back("b");
+    else str.push_back(QString::number(static_cast<int>(board[i])));
+
+    str.push_back(' ');
+
+    if((i + 1) % X_SIZE == 0) str.push_back('\n');
+  }
+  qDebug().noquote()<<str;*/
 }
 
 board_t board_logic_t::impl_t::get_board() const
@@ -72,16 +100,20 @@ void board_logic_t::impl_t::open_field(const coord_t& /*pos*/)
 {
 }
 
+void board_logic_t::impl_t::mark_field(const coord_t& /*pos*/, bool /*bomb*/)
+{
+}
+
 void board_logic_t::impl_t::generate_field()
 {
-  for(int i = 0; i < FIELD_SIZE; ++i)
+  for(int i = 0; i < BOMBS_NUM; ++i)
   {
     size_t pos = get_random_field();
     while(board[pos] == ELEMENT::bomb) pos = get_random_field();
 
     board[pos] = ELEMENT::bomb;
 
-    for(auto& c : get_around_not_bomb_fields(to_coord(pos))) ++board[get_pos(c)];
+    for(auto& c : get_around_not_bomb_fields(to_coord(pos))) board[get_pos(c)] = static_cast<ELEMENT>(static_cast<int>(board[get_pos(c)]) + 1);
   }
 }
 
@@ -91,9 +123,10 @@ std::vector<coord_t> board_logic_t::impl_t::get_around_not_bomb_fields(const coo
                            coord_t{c.x - 1, c.y    },                        coord_t{c.x + 1, c.y    },
                            coord_t{c.x - 1, c.y - 1}, coord_t{c.x, c.y - 1}, coord_t{c.x + 1, c.y - 1}};
 
-  for(size_t i = 0; i < cs.size(); ++i)
+  for(size_t i = 0; i < cs.size();)
   {
-    if(!valid(cs[i]) || board[get_pos(cs[i])] == ELEMENT::bomb) cs.erase(cs.begin() + 1);
+    if(!valid(cs[i]) || board[get_pos(cs[i])] == ELEMENT::bomb) cs.erase(cs.begin() + i);
+    else ++i;
   }
 
   return cs;

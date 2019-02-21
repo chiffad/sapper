@@ -1,4 +1,4 @@
-QT += quick
+QT += quick core
 CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
@@ -13,13 +13,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        cpp/main.cpp  \
-        cpp/board.cpp \
+        cpp/main.cpp        \
+        cpp/board_logic.cpp \
 
 HEADERS += \
-        cpp/board.hpp      \
-        cpp/board_view.hpp \
-        cpp/helper.hpp     \
+        cpp/board_logic.hpp \
+        cpp/board_view.hpp  \
+        cpp/helper.hpp      \
 
 
 RESOURCES += qml.qrc

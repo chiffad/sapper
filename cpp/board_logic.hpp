@@ -16,6 +16,7 @@ public:
 
   board_t get_board() const;
   void open_field(const coord_t& pos);
+  void mark_field(const coord_t& pos, bool bomb);
 
 private:
   struct impl_t;

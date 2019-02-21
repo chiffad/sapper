@@ -3,6 +3,8 @@
 #include <array>
 #include <iostream>
 #include <cstdlib>
+#include <utility>
+#include <complex>
 
 
 namespace sapper
@@ -17,36 +19,17 @@ using board_t = std::array<ELEMENT, FIELD_SIZE>;
 
 struct coord_t
 {
-  size_t x;
-  size_t y;
+  int x;
+  int y;
 };
-
-ELEMENT& operator++(ELEMENT& e)
-{
-  switch(e)
-  {
-    case ELEMENT::empty: return e = ELEMENT::empty;
-    case ELEMENT::one  : return e = ELEMENT::one  ;
-    case ELEMENT::two  : return e = ELEMENT::two  ;
-    case ELEMENT::three: return e = ELEMENT::three;
-    case ELEMENT::four : return e = ELEMENT::four ;
-    case ELEMENT::five : return e = ELEMENT::five ;
-    case ELEMENT::six  : return e = ELEMENT::six  ;
-    case ELEMENT::seven: return e = ELEMENT::seven;
-    default:
-    {
-      std::cout<<"not valid element!!!"<<std::endl;
-      std::abort();
-    }
-  }
-}
 
 inline bool valid(const coord_t& c) noexcept
 {
-  return c.x < X_SIZE && c.y < Y_SIZE;
+  return 0 <= c.x && c.x < X_SIZE &&
+         0 <= c.y && c.y < Y_SIZE;
 }
 
-inline coord_t to_coord(const size_t pos) noexcept
+inline coord_t to_coord(const int pos) noexcept
 {
   return coord_t{pos % X_SIZE, pos / X_SIZE};
 }
