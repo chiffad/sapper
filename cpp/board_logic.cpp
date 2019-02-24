@@ -5,11 +5,10 @@
 #include <vector>
 #include <utility>
 
-//DBG
-/*
-#include <QDebug>
-#include <QString>
-*/
+#ifdef DEBUG_ON
+#include "logger.hpp"
+#endif
+
 
 
 namespace
@@ -30,8 +29,8 @@ struct board_logic_t::impl_t
 {
   impl_t();
   board_t get_board() const;
-  void open_field(const coord_t& pos);
-  void mark_field(const coord_t& pos, bool bomb);
+  void open_field(size_t pos);
+  void mark_field(size_t pos, bool bomb);
 
   void generate_field();
   std::vector<coord_t> get_around_not_bomb_fields(const coord_t& c) const;
@@ -55,12 +54,12 @@ board_t board_logic_t::get_board() const
   return impl->get_board();
 }
 
-void board_logic_t::open_field(const coord_t& pos)
+void board_logic_t::open_field(const size_t pos)
 {
   impl->open_field(pos);
 }
 
-void board_logic_t::mark_field(const coord_t& pos, bool bomb)
+void board_logic_t::mark_field(const size_t pos, bool bomb)
 {
   impl->mark_field(pos, bomb);
 }
@@ -76,8 +75,7 @@ board_logic_t::impl_t::impl_t()
 
   generate_field();
 
-  //DBG
-  /*
+#ifdef DEBUG_ON
   QString str;
   for(size_t i = 0; i < board.size(); ++i)
   {
@@ -88,19 +86,21 @@ board_logic_t::impl_t::impl_t()
 
     if((i + 1) % X_SIZE == 0) str.push_back('\n');
   }
-  qDebug().noquote()<<str;*/
+  LOG_DBG<<str;
+#endif
 }
 
 board_t board_logic_t::impl_t::get_board() const
 {
-  return board;//opened_board;
+  return opened_board;
 }
 
-void board_logic_t::impl_t::open_field(const coord_t& /*pos*/)
+void board_logic_t::impl_t::open_field(size_t pos)
 {
+  opened_board[pos] = board[pos];
 }
 
-void board_logic_t::impl_t::mark_field(const coord_t& /*pos*/, bool /*bomb*/)
+void board_logic_t::impl_t::mark_field(size_t /*pos*/, bool /*bomb*/)
 {
 }
 

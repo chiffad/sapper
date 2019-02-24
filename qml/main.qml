@@ -25,28 +25,39 @@ Window
     property int el_height: root_window.height/20
     Rectangle
     {
-      width: img.width
-      height: img.height
+      width: rep.el_width
+      height: rep.el_width
+      x: posX * rep.el_width
+      y: posY * rep.el_height
+
       color: "grey"
-      border.color: "dark gray"
-      border.width: 3
-      radius: 5
+      border.color: "black"
+      border.width: 2
+      radius: 3
+
 
       Image
       {
         id: img
 
-        x: posX * rep.el_width
-        y: posY * rep.el_height
-
-        width: rep.el_width
-        height: rep.el_height
+        anchors.fill: parent
 
         source:
         {
-          console.log("aaaaaaaa: ", type)
-          if(type == 98 || type == 104) return "res/bomb.png"
+          //console.log("aaaaaaaa: ", type)
+          if(type == 98) return "res/bomb.png"
+          else if(type == 104) return "res/hidden.jpg"
           else return "res/1.png"
+        }
+      }
+
+      MouseArea
+      {
+        anchors.fill: parent
+
+        onClicked:
+        {
+          BoardEntryModel.field_clicked(index);
         }
       }
     }

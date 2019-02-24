@@ -15,8 +15,8 @@ public:
   ~board_logic_t();
 
   board_t get_board() const;
-  void open_field(const coord_t& pos);
-  void mark_field(const coord_t& pos, bool bomb);
+  void open_field(const size_t pos);
+  void mark_field(const size_t pos, bool bomb);
 
 private:
   struct impl_t;

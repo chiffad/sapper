@@ -4,6 +4,11 @@
 #include "helper.hpp"
 
 
+#ifdef DEBUG_ON
+#include "logger.hpp"
+#endif
+
+
 namespace sapper
 {
 
@@ -28,6 +33,9 @@ struct BoardEntryModel::impl_t
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
   QHash<int, QByteArray> roleNames() const;
 
+  void field_clicked(int pos, BoardEntryModel& list);
+
+
   board_logic_t board_logic;
   QHash<int, QByteArray> role_names;
   QList<obj_t> objs;
@@ -45,6 +53,7 @@ BoardEntryModel::~BoardEntryModel() = default;
 
 int BoardEntryModel::rowCount(const QModelIndex &parent) const
 {
+ // createIndex(1,0);
   return impl->rowCount(parent);
 }
 
@@ -57,6 +66,12 @@ QHash<int, QByteArray> BoardEntryModel::roleNames() const
 {
   return impl->roleNames();
 }
+
+void BoardEntryModel::field_clicked(int pos)
+{
+  impl->field_clicked(pos, *this);
+}
+
 ///
 
 /////////////////////////////////////////////////////////
@@ -102,6 +117,27 @@ QHash<int, QByteArray> BoardEntryModel::impl_t::roleNames() const
   return role_names;
 }
 
+void BoardEntryModel::impl_t::field_clicked(int pos, BoardEntryModel& list)
+{
+#ifdef DEBUG_ON
+  LOG_DBG()<<"clicked on element: "<<pos<<'\n';
+#endif
+  board_logic.open_field(pos);
+
+  size_t i = 0;
+  for(auto& el : board_logic.get_board())
+  {
+    auto& i_obj_t = objs[i].type;
+    if(i_obj_t != static_cast<char>(el))
+    {
+      i_obj_t = static_cast<char>(el);
+      QModelIndex topLeft = list.createIndex(i, 0);
+      QModelIndex bottomRight = list.createIndex(i, 0);
+      emit list.dataChanged(topLeft, bottomRight);
+    }
+    ++i;
+  }
+}
 ///
 
 

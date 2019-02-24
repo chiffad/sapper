@@ -3,5 +3,6 @@
         <file>qml/main.qml</file>
         <file>qml/res/1.png</file>
         <file>qml/res/bomb.png</file>
+        <file>qml/res/hidden.jpg</file>
     </qresource>
 </RCC>
