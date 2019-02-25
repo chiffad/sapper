@@ -1,14 +1,15 @@
 #include "board_logic.hpp"
+#include "logger.hpp"
 
 #include <cstdlib>
 #include <ctime>
 #include <vector>
 #include <utility>
 
-#ifdef DEBUG_ON
-#include "logger.hpp"
-#endif
 
+#ifdef DEBUG_ON
+#include <string>
+#endif
 
 
 namespace
@@ -18,7 +19,6 @@ size_t get_random_field()
   return std::rand() % sapper::FIELD_SIZE;
 }
 }
-
 
 namespace sapper
 {
@@ -76,10 +76,10 @@ board_logic_t::impl_t::impl_t()
   generate_field();
 
 #ifdef DEBUG_ON
-  QString str;
+  std::string str;
   for(size_t i = 0; i < board.size(); ++i)
   {
-    if(board[i] == ELEMENT::bomb) str.push_back("b");
+    if(board[i] == ELEMENT::bomb) str.push_back('b');
     else str.push_back(static_cast<char>(board[i]));
 
     str.push_back(' ');

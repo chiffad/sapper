@@ -2,11 +2,7 @@
 
 #include "board_logic.hpp"
 #include "helper.hpp"
-
-
-#ifdef DEBUG_ON
 #include "logger.hpp"
-#endif
 
 
 namespace sapper
@@ -119,9 +115,8 @@ QHash<int, QByteArray> BoardEntryModel::impl_t::roleNames() const
 
 void BoardEntryModel::impl_t::field_clicked(int pos, BoardEntryModel& list)
 {
-#ifdef DEBUG_ON
-  LOG_DBG()<<"clicked on element: "<<pos<<'\n';
-#endif
+  LOG_DBG<<"clicked on element: "<<pos;
+
   board_logic.open_field(pos);
 
   size_t i = 0;
