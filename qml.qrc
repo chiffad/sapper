@@ -6,5 +6,6 @@
         <file>qml/res/hidden.png</file>
         <file>qml/res/empty.png</file>
         <file>qml/res/flag.png</file>
+        <file>qml/Board.qml</file>
     </qresource>
 </RCC>
