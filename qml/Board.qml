@@ -8,7 +8,7 @@ Item
   {
     id: rep
     anchors.fill: board
-    model: BoardEntryModel
+    model: GameWorld
 
     property int el_width: rep.width/15
     property int el_height: rep.height/20
@@ -47,7 +47,7 @@ Item
 
           onClicked:
           {
-            BoardEntryModel.field_clicked(index);
+            GameWorld.field_clicked(index);
           }
         }
       }

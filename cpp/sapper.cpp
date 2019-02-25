@@ -1,4 +1,4 @@
-#include "board_entry_model.hpp"
+#include "sapper.hpp"
 
 #include "board_logic.hpp"
 #include "helper.hpp"
@@ -15,7 +15,7 @@ struct obj_t
   int posY;
 };
 
-struct BoardEntryModel::impl_t
+struct Sapper::impl_t
 {
   enum RoleNames {
     type = Qt::UserRole,
@@ -29,7 +29,7 @@ struct BoardEntryModel::impl_t
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
   QHash<int, QByteArray> roleNames() const;
 
-  void field_clicked(int pos, BoardEntryModel& list);
+  void field_clicked(int pos, Sapper& list);
 
 
   board_logic_t board_logic;
@@ -39,31 +39,31 @@ struct BoardEntryModel::impl_t
 
 
 /////////////////////////////////////////////////////////
-///BoardEntryModel implementation
-BoardEntryModel::BoardEntryModel()
+///Sapper implementation
+Sapper::Sapper()
   : impl(new impl_t)
 {
 }
 
-BoardEntryModel::~BoardEntryModel() = default;
+Sapper::~Sapper() = default;
 
-int BoardEntryModel::rowCount(const QModelIndex &parent) const
+int Sapper::rowCount(const QModelIndex &parent) const
 {
  // createIndex(1,0);
   return impl->rowCount(parent);
 }
 
-QVariant BoardEntryModel::data(const QModelIndex &index, int role) const
+QVariant Sapper::data(const QModelIndex &index, int role) const
 {
   return impl->data(index, role);
 }
 
-QHash<int, QByteArray> BoardEntryModel::roleNames() const
+QHash<int, QByteArray> Sapper::roleNames() const
 {
   return impl->roleNames();
 }
 
-void BoardEntryModel::field_clicked(int pos)
+void Sapper::field_clicked(int pos)
 {
   impl->field_clicked(pos, *this);
 }
@@ -71,8 +71,8 @@ void BoardEntryModel::field_clicked(int pos)
 ///
 
 /////////////////////////////////////////////////////////
-///BoardEntryModel::impl_t implementation
-BoardEntryModel::impl_t::impl_t()
+///Sapper::impl_t implementation
+Sapper::impl_t::impl_t()
 {
   role_names[type] = "type";
   role_names[posX] = "posX";
@@ -87,12 +87,12 @@ BoardEntryModel::impl_t::impl_t()
   }
 }
 
-int BoardEntryModel::impl_t::rowCount([[maybe_unused]] const QModelIndex &parent) const
+int Sapper::impl_t::rowCount([[maybe_unused]] const QModelIndex &parent) const
 {
   return objs.size();
 }
 
-QVariant BoardEntryModel::impl_t::data(const QModelIndex &index, int role) const
+QVariant Sapper::impl_t::data(const QModelIndex &index, int role) const
 {
   const int row = index.row();
   if(!index.isValid() || row>= objs.size()) return {};
@@ -108,12 +108,12 @@ QVariant BoardEntryModel::impl_t::data(const QModelIndex &index, int role) const
   return {};
 }
 
-QHash<int, QByteArray> BoardEntryModel::impl_t::roleNames() const
+QHash<int, QByteArray> Sapper::impl_t::roleNames() const
 {
   return role_names;
 }
 
-void BoardEntryModel::impl_t::field_clicked(int pos, BoardEntryModel& list)
+void Sapper::impl_t::field_clicked(int pos, Sapper& list)
 {
   LOG_DBG<<"clicked on element: "<<pos;
 

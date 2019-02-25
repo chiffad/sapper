@@ -1,5 +1,5 @@
 #include "board_logic.hpp"
-#include "board_entry_model.hpp"
+#include "sapper.hpp"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -14,9 +14,9 @@ int main(int argc, char *argv[])
 
   QGuiApplication app(argc, argv);
 
-  sapper::BoardEntryModel board;
+  sapper::Sapper game;
   QQmlApplicationEngine engine;
-  engine.rootContext()->setContextProperty("BoardEntryModel", &board);
+  engine.rootContext()->setContextProperty("GameWorld", &game);
   engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
   if(engine.rootObjects().isEmpty()) return -1;

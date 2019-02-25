@@ -7,13 +7,13 @@
 namespace sapper
 {
 
-class BoardEntryModel : public QAbstractListModel
+class Sapper : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
-  BoardEntryModel();
-  ~BoardEntryModel() override;
+  Sapper();
+  ~Sapper() override;
 
   int rowCount([[maybe_unused]] const QModelIndex &parent = QModelIndex()) const override;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
