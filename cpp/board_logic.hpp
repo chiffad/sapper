@@ -15,7 +15,8 @@ public:
   ~board_logic_t();
 
   board_t get_board() const;
-  void open_field(const size_t pos);
+  //return false if field already open
+  bool open_field(const size_t pos);
   void mark_field(const size_t pos, bool bomb);
 
 private:

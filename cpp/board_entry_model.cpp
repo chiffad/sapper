@@ -117,7 +117,7 @@ void BoardEntryModel::impl_t::field_clicked(int pos, BoardEntryModel& list)
 {
   LOG_DBG<<"clicked on element: "<<pos;
 
-  board_logic.open_field(pos);
+  if(!board_logic.open_field(pos)) return;
 
   size_t i = 0;
   for(auto& el : board_logic.get_board())

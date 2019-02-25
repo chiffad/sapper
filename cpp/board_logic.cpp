@@ -29,11 +29,11 @@ struct board_logic_t::impl_t
 {
   impl_t();
   board_t get_board() const;
-  void open_field(size_t pos);
+  bool open_field(size_t pos);
   void mark_field(size_t pos, bool bomb);
 
   void generate_field();
-  std::vector<coord_t> get_around_not_bomb_fields(const coord_t& c) const;
+  std::vector<coord_t> get_around_coords(const coord_t& c) const;
 
   board_t board;
   board_t opened_board;
@@ -54,9 +54,9 @@ board_t board_logic_t::get_board() const
   return impl->get_board();
 }
 
-void board_logic_t::open_field(const size_t pos)
+bool board_logic_t::open_field(const size_t pos)
 {
-  impl->open_field(pos);
+  return impl->open_field(pos);
 }
 
 void board_logic_t::mark_field(const size_t pos, bool bomb)
@@ -95,9 +95,17 @@ board_t board_logic_t::impl_t::get_board() const
   return opened_board;
 }
 
-void board_logic_t::impl_t::open_field(size_t pos)
+bool board_logic_t::impl_t::open_field(size_t pos)
 {
+  if(opened_board[pos] != ELEMENT::hidden) return false;
+
   opened_board[pos] = board[pos];
+
+  if(board[pos] != ELEMENT::empty) return true;
+
+  for(auto& c : get_around_coords(to_coord(pos))) open_field(get_pos(c));
+
+  return true;
 }
 
 void board_logic_t::impl_t::mark_field(size_t /*pos*/, bool /*bomb*/)
@@ -113,11 +121,16 @@ void board_logic_t::impl_t::generate_field()
 
     board[pos] = ELEMENT::bomb;
 
-    for(auto& c : get_around_not_bomb_fields(to_coord(pos))) board[get_pos(c)] = static_cast<ELEMENT>(static_cast<int>(board[get_pos(c)]) + 1);
+    for(auto& c : get_around_coords(to_coord(pos)))
+    {
+      if(board[get_pos(c)] == ELEMENT::bomb) continue;
+
+      board[get_pos(c)] = static_cast<ELEMENT>(static_cast<int>(board[get_pos(c)]) + 1);
+    }
   }
 }
 
-std::vector<coord_t> board_logic_t::impl_t::get_around_not_bomb_fields(const coord_t& c) const
+std::vector<coord_t> board_logic_t::impl_t::get_around_coords(const coord_t& c) const
 {
   std::vector<coord_t> cs {coord_t{c.x - 1, c.y + 1}, coord_t{c.x, c.y + 1}, coord_t{c.x + 1, c.y + 1},
                            coord_t{c.x - 1, c.y    },                        coord_t{c.x + 1, c.y    },
@@ -125,7 +138,7 @@ std::vector<coord_t> board_logic_t::impl_t::get_around_not_bomb_fields(const coo
 
   for(size_t i = 0; i < cs.size();)
   {
-    if(!valid(cs[i]) || board[get_pos(cs[i])] == ELEMENT::bomb) cs.erase(cs.begin() + i);
+    if(!valid(cs[i])) cs.erase(cs.begin() + i);
     else ++i;
   }
 
