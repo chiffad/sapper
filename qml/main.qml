@@ -11,7 +11,7 @@ Window
   Rectangle
   {
     id: background
-    color: "black"
+    color: "dark grey"
     anchors.fill: parent
   }
 
@@ -25,39 +25,41 @@ Window
     property int el_height: root_window.height/20
     Rectangle
     {
+      id: rect
       width: rep.el_width
-      height: rep.el_width
+      height: rep.el_height
       x: posX * rep.el_width
       y: posY * rep.el_height
 
-      color: "grey"
-      border.color: "black"
-      border.width: 2
-      radius: 3
-
+      color: "transparent"
+      border.color: "dark grey"
+      border.width: rect.width/20
 
       Image
       {
         id: img
-
-        anchors.fill: parent
+        width: rect.width - rect.border.width
+        height: rect.height - rect.border.width
 
         source:
         {
-          //console.log("aaaaaaaa: ", type)
-          if(type == 98) return "res/bomb.png"
-          else if(type == 104) return "res/hidden.jpg"
-          else return "res/1.png"
+          switch(type)
+          {
+            case "b".charCodeAt(0): return "res/bomb.png"
+            case "h".charCodeAt(0): return "res/hidden.png"
+            case "0".charCodeAt(0): return "res/empty.png"
+            default : return "res/1.png"
+          }
         }
-      }
 
-      MouseArea
-      {
-        anchors.fill: parent
-
-        onClicked:
+        MouseArea
         {
-          BoardEntryModel.field_clicked(index);
+          anchors.fill: parent
+
+          onClicked:
+          {
+            BoardEntryModel.field_clicked(index);
+          }
         }
       }
     }

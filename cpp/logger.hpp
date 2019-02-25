@@ -62,7 +62,7 @@ os_t& operator<<(os_t& os, [[maybe_unused]] logger_t::LEVEL l)
 
 inline logger_t::logger_t([[maybe_unused]] LEVEL l, [[maybe_unused]] const char *file, [[maybe_unused]] int line, [[maybe_unused]] const char *func)
 {
-  ss<<"<"<<l<<"> <"<<file<<"::"<<line<<"> <"<<func<<"> ";
+  ss<<"<"<<l<<"><"<<file<<"::"<<line<<"><"<<func<<"> ";
 }
 
 #define LOGGER_FILENAME (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
