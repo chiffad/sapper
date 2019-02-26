@@ -22,6 +22,7 @@ public:
 public:
   Q_INVOKABLE void field_clicked(int pos);
   Q_INVOKABLE void change_click_mode();
+  Q_INVOKABLE void start_new_game();
 
   Q_PROPERTY(int click_mode READ click_mode NOTIFY click_modeChanged);
   int click_mode() const;

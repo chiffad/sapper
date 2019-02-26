@@ -18,6 +18,8 @@ size_t get_random_field()
 {
   return std::rand() % sapper::FIELD_SIZE;
 }
+
+using GAME_STATUS = sapper::board_logic_t::GAME_STATUS;
 }
 
 namespace sapper
@@ -31,14 +33,15 @@ struct board_logic_t::impl_t
   board_t get_board() const;
   bool open_field(size_t pos);
   bool mark_field(size_t pos, bool bomb);
-  bool game_over() const;
+  GAME_STATUS game_status() const;
+  void start_new_game();
 
   void generate_field();
   std::vector<coord_t> get_around_coords(const coord_t& c) const;
 
   board_t board;
   board_t opened_board;
-  bool is_game_over;
+  GAME_STATUS status;
 };
 ///
 
@@ -66,22 +69,24 @@ bool board_logic_t::mark_field(const size_t pos, bool bomb)
   return impl->mark_field(pos, bomb);
 }
 
-bool board_logic_t::game_over() const
+GAME_STATUS board_logic_t::game_status() const
 {
-  return impl->game_over();
+  return impl->game_status();
+}
+
+void board_logic_t::start_new_game()
+{
+  impl->start_new_game();
 }
 ///
 
 /////////////////////////////////////////////////////////
 ///board_logic_t::impl_t implementation
 board_logic_t::impl_t::impl_t()
-  : is_game_over(false)
+  : status(GAME_STATUS::in_progress)
 {
   std::srand(std::time(nullptr));
-  board.fill(ELEMENT::empty);
-  opened_board.fill(ELEMENT::hidden);
-
-  generate_field();
+  start_new_game();
 
 #ifdef DEBUG_ON
   std::string str;
@@ -105,13 +110,14 @@ board_t board_logic_t::impl_t::get_board() const
 
 bool board_logic_t::impl_t::open_field(size_t pos)
 {
-  if(is_game_over || opened_board[pos] != ELEMENT::hidden) return false;
+  if(status != GAME_STATUS::in_progress
+     || opened_board[pos] != ELEMENT::hidden) return false;
 
   opened_board[pos] = board[pos];
 
   if(board[pos] != ELEMENT::empty)
   {
-    if(board[pos] == ELEMENT::bomb) is_game_over = true;
+    if(board[pos] == ELEMENT::bomb) status = GAME_STATUS::lose;
     return true;
   }
 
@@ -125,9 +131,18 @@ bool board_logic_t::impl_t::mark_field(size_t /*pos*/, bool /*bomb*/)
   return true;
 }
 
-bool board_logic_t::impl_t::game_over() const
+GAME_STATUS board_logic_t::impl_t::game_status() const
 {
-  return is_game_over;
+  return status;
+}
+
+void board_logic_t::impl_t::start_new_game()
+{
+  status = GAME_STATUS::in_progress;
+  board.fill(ELEMENT::empty);
+  opened_board.fill(ELEMENT::hidden);
+
+  generate_field();
 }
 
 void board_logic_t::impl_t::generate_field()

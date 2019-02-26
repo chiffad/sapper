@@ -17,5 +17,6 @@
         <file>qml/res/dead.png</file>
         <file>qml/res/in_progress.png</file>
         <file>qml/res/win.png</file>
+        <file>qml/TopMenu.qml</file>
     </qresource>
 </RCC>

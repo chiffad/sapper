@@ -26,7 +26,6 @@ struct Sapper::impl_t
   };
 
   enum CLICK_MODE {open, mark_bomb};
-  enum GAME_STATUS{in_progress, win, lose};
 
   impl_t();
 
@@ -36,12 +35,13 @@ struct Sapper::impl_t
 
   void field_clicked(size_t pos, Sapper& list);
   int click_mode() const;
+  void start_new_game(Sapper& list);
   void change_click_mode();
   int game_status() const;
+  void update_board(Sapper& list);
 
   board_logic_t board_logic;
   CLICK_MODE mode;
-  GAME_STATUS status;
   QHash<int, QByteArray> role_names;
   QList<obj_t> objs;
 };
@@ -82,6 +82,12 @@ void Sapper::change_click_mode()
   emit click_modeChanged();
 }
 
+void Sapper::start_new_game()
+{
+  impl->start_new_game(*this);
+  emit game_statusChanged();
+}
+
 int Sapper::click_mode() const
 {
   return impl->click_mode();
@@ -97,7 +103,6 @@ int Sapper::game_status() const
 ///Sapper::impl_t implementation
 Sapper::impl_t::impl_t()
   : mode(CLICK_MODE::open)
-  , status(GAME_STATUS::in_progress)
 {
   role_names[type] = "type";
   role_names[posX] = "posX";
@@ -145,6 +150,38 @@ void Sapper::impl_t::field_clicked(size_t pos, Sapper& list)
   if(mode == CLICK_MODE::mark_bomb && board_logic.mark_field(pos, false)) return;
   else if(!board_logic.open_field(pos)) return;
 
+  update_board(list);
+
+  if(board_logic.game_status() == board_logic_t::GAME_STATUS::lose) emit list.game_statusChanged();
+}
+
+void Sapper::impl_t::change_click_mode()
+{
+  switch(mode)
+  {
+    case CLICK_MODE::open     : mode = CLICK_MODE::mark_bomb; break;
+    case CLICK_MODE::mark_bomb: mode = CLICK_MODE::open     ; break;
+  }
+}
+
+void Sapper::impl_t::start_new_game(Sapper& list)
+{
+  board_logic.start_new_game();
+  update_board(list);
+}
+
+int Sapper::impl_t::click_mode() const
+{
+  return static_cast<int>(mode);
+}
+
+int Sapper::impl_t::game_status() const
+{
+  return board_logic.game_status();
+}
+
+void Sapper::impl_t::update_board(Sapper& list)
+{
   size_t i = 0;
   for(auto& el : board_logic.get_board())
   {
@@ -158,31 +195,8 @@ void Sapper::impl_t::field_clicked(size_t pos, Sapper& list)
     }
     ++i;
   }
-  if(board_logic.game_over())
-  {
-    status = GAME_STATUS::lose;
-    emit list.game_statusChanged();
-  }
 }
 
-void Sapper::impl_t::change_click_mode()
-{
-  switch(mode)
-  {
-    case CLICK_MODE::open     : mode = CLICK_MODE::mark_bomb; break;
-    case CLICK_MODE::mark_bomb: mode = CLICK_MODE::open; break;
-  }
-}
-
-int Sapper::impl_t::click_mode() const
-{
-  return static_cast<int>(mode);
-}
-
-int Sapper::impl_t::game_status() const
-{
-  return status;
-}
 ///
 
 

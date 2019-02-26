@@ -13,7 +13,7 @@ namespace sapper
 const int X_SIZE = 15;
 const int Y_SIZE = 20;
 const int FIELD_SIZE = Y_SIZE * X_SIZE;
-const int BOMBS_NUM = 45;
+const int BOMBS_NUM = 55;
 enum class ELEMENT {hidden = 'h', bomb  = 'b',
                     empty  = '0', one   = '1', two   = '2',
                     three  = '3', four  = '4', five  = '5',
