@@ -21,6 +21,17 @@ public:
 
 public:
   Q_INVOKABLE void field_clicked(int pos);
+  Q_INVOKABLE void change_click_mode();
+
+  Q_PROPERTY(int click_mode READ click_mode NOTIFY click_modeChanged);
+  int click_mode() const;
+
+  Q_PROPERTY(int game_status READ game_status NOTIFY game_statusChanged);
+  int game_status() const;
+
+signals:
+  void game_statusChanged();
+  void click_modeChanged();
 
 private:
   struct impl_t;

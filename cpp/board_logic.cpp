@@ -30,13 +30,15 @@ struct board_logic_t::impl_t
   impl_t();
   board_t get_board() const;
   bool open_field(size_t pos);
-  void mark_field(size_t pos, bool bomb);
+  bool mark_field(size_t pos, bool bomb);
+  bool game_over() const;
 
   void generate_field();
   std::vector<coord_t> get_around_coords(const coord_t& c) const;
 
   board_t board;
   board_t opened_board;
+  bool is_game_over;
 };
 ///
 
@@ -59,15 +61,21 @@ bool board_logic_t::open_field(const size_t pos)
   return impl->open_field(pos);
 }
 
-void board_logic_t::mark_field(const size_t pos, bool bomb)
+bool board_logic_t::mark_field(const size_t pos, bool bomb)
 {
-  impl->mark_field(pos, bomb);
+  return impl->mark_field(pos, bomb);
+}
+
+bool board_logic_t::game_over() const
+{
+  return impl->game_over();
 }
 ///
 
 /////////////////////////////////////////////////////////
 ///board_logic_t::impl_t implementation
 board_logic_t::impl_t::impl_t()
+  : is_game_over(false)
 {
   std::srand(std::time(nullptr));
   board.fill(ELEMENT::empty);
@@ -97,19 +105,29 @@ board_t board_logic_t::impl_t::get_board() const
 
 bool board_logic_t::impl_t::open_field(size_t pos)
 {
-  if(opened_board[pos] != ELEMENT::hidden) return false;
+  if(is_game_over || opened_board[pos] != ELEMENT::hidden) return false;
 
   opened_board[pos] = board[pos];
 
-  if(board[pos] != ELEMENT::empty) return true;
+  if(board[pos] != ELEMENT::empty)
+  {
+    if(board[pos] == ELEMENT::bomb) is_game_over = true;
+    return true;
+  }
 
   for(auto& c : get_around_coords(to_coord(pos))) open_field(get_pos(c));
 
   return true;
 }
 
-void board_logic_t::impl_t::mark_field(size_t /*pos*/, bool /*bomb*/)
+bool board_logic_t::impl_t::mark_field(size_t /*pos*/, bool /*bomb*/)
 {
+  return true;
+}
+
+bool board_logic_t::impl_t::game_over() const
+{
+  return is_game_over;
 }
 
 void board_logic_t::impl_t::generate_field()

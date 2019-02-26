@@ -15,9 +15,11 @@ public:
   ~board_logic_t();
 
   board_t get_board() const;
+  bool game_over() const;
   //return false if field already open
   bool open_field(const size_t pos);
-  void mark_field(const size_t pos, bool bomb);
+  bool mark_field(const size_t pos, bool bomb);
+
 
 private:
   struct impl_t;

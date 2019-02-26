@@ -1,11 +1,21 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
+        <file>qml/Board.qml</file>
         <file>qml/res/1.png</file>
+        <file>qml/res/2.png</file>
+        <file>qml/res/3.png</file>
+        <file>qml/res/4.png</file>
+        <file>qml/res/5.png</file>
+        <file>qml/res/6.png</file>
+        <file>qml/res/7.png</file>
+        <file>qml/res/8.png</file>
         <file>qml/res/bomb.png</file>
         <file>qml/res/hidden.png</file>
         <file>qml/res/empty.png</file>
         <file>qml/res/flag.png</file>
-        <file>qml/Board.qml</file>
+        <file>qml/res/dead.png</file>
+        <file>qml/res/in_progress.png</file>
+        <file>qml/res/win.png</file>
     </qresource>
 </RCC>

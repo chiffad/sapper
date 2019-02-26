@@ -29,6 +29,42 @@ Window
       color: background.color
       border.color: "dimgray"
       border.width: 1
+      Row
+      {
+        Item
+        {
+          id: game_status
+          height: top_menu.height
+          width: top_menu.width/2
+
+          Image
+          {
+            anchors.centerIn: game_status
+            height: game_status.height/2
+            width: height
+
+            property var res: ["res/in_progress.png", "res/win.png", "res/dead.png"]
+            source: res[GameWorld.game_status]
+          }
+        }
+
+        Rectangle
+        {
+          id: click_mode
+          color: GameWorld.click_mode == 0 ?  "blue" : "white"
+          height: top_menu.height
+          width: top_menu.width/2
+
+          MouseArea
+          {
+            anchors.fill: parent
+            onClicked:
+            {
+              GameWorld.change_click_mode();
+            }
+          }
+        }
+      }
     }
 
     Board
