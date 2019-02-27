@@ -147,7 +147,10 @@ void Sapper::impl_t::field_clicked(size_t pos, Sapper& list)
 {
   LOG_DBG<<"clicked on element: "<<pos;
 
-  if(mode == CLICK_MODE::mark_bomb && board_logic.mark_field(pos, false)) return;
+  if(mode == CLICK_MODE::mark_bomb)
+  {
+    if(!board_logic.mark_field(pos)) return;
+  }
   else if(!board_logic.open_field(pos)) return;
 
   update_board(list);

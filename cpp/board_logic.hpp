@@ -22,7 +22,7 @@ public:
   void start_new_game();
   //return false if field already open
   bool open_field(const size_t pos);
-  bool mark_field(const size_t pos, bool bomb);
+  bool mark_field(const size_t pos);
 
 
 private:

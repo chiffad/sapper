@@ -14,10 +14,10 @@ const int X_SIZE = 15;
 const int Y_SIZE = 20;
 const int FIELD_SIZE = Y_SIZE * X_SIZE;
 const int BOMBS_NUM = 55;
-enum class ELEMENT {hidden = 'h', bomb  = 'b',
+enum class ELEMENT {hidden = 'h', bomb  = 'b', flag  = 'f',
                     empty  = '0', one   = '1', two   = '2',
                     three  = '3', four  = '4', five  = '5',
-                    six    = '6', seven = '7', eight = '8'};
+                    six    = '6', seven = '7', eight = '8' };
 using board_t = std::array<ELEMENT, FIELD_SIZE>;
 
 struct coord_t

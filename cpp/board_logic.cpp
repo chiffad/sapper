@@ -32,7 +32,7 @@ struct board_logic_t::impl_t
   impl_t();
   board_t get_board() const;
   bool open_field(size_t pos);
-  bool mark_field(size_t pos, bool bomb);
+  bool mark_field(size_t pos);
   GAME_STATUS game_status() const;
   void start_new_game();
 
@@ -41,8 +41,8 @@ struct board_logic_t::impl_t
 
   board_t board;
   board_t opened_board;
-  size_t hidden_left;
   GAME_STATUS status;
+  size_t hidden_left;
 };
 ///
 
@@ -65,9 +65,9 @@ bool board_logic_t::open_field(const size_t pos)
   return impl->open_field(pos);
 }
 
-bool board_logic_t::mark_field(const size_t pos, bool bomb)
+bool board_logic_t::mark_field(const size_t pos)
 {
-  return impl->mark_field(pos, bomb);
+  return impl->mark_field(pos);
 }
 
 GAME_STATUS board_logic_t::game_status() const
@@ -131,8 +131,23 @@ bool board_logic_t::impl_t::open_field(size_t pos)
   return true;
 }
 
-bool board_logic_t::impl_t::mark_field(size_t /*pos*/, bool /*bomb*/)
+bool board_logic_t::impl_t::mark_field(size_t pos)
 {
+  LOG_DBG<<"try_to_mark: "<<pos;
+  if(status != GAME_STATUS::in_progress) return false;
+
+  if(opened_board[pos] == ELEMENT::flag)
+  {
+    LOG_DBG<<"mark from flag to hidden: "<<pos;
+    opened_board[pos] = ELEMENT::hidden;
+    return true;
+  }
+
+  if(opened_board[pos] != ELEMENT::hidden) return false;
+
+  LOG_DBG<<"mark flag: "<<pos;
+  opened_board[pos] = ELEMENT::flag;
+
   return true;
 }
 

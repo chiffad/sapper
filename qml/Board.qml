@@ -36,6 +36,7 @@ Item
           {
             case "b".charCodeAt(0): return "res/bomb.png"
             case "h".charCodeAt(0): return "res/hidden.png"
+            case "f".charCodeAt(0): return "res/flag.png"
             case "0".charCodeAt(0): return "res/empty.png"
             case "1".charCodeAt(0): return "res/1.png"
             case "2".charCodeAt(0): return "res/2.png"
