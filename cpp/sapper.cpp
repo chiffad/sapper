@@ -152,7 +152,7 @@ void Sapper::impl_t::field_clicked(size_t pos, Sapper& list)
 
   update_board(list);
 
-  if(board_logic.game_status() == board_logic_t::GAME_STATUS::lose) emit list.game_statusChanged();
+  if(board_logic.game_status() != board_logic_t::GAME_STATUS::in_progress) emit list.game_statusChanged();
 }
 
 void Sapper::impl_t::change_click_mode()

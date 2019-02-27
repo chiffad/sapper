@@ -41,6 +41,7 @@ struct board_logic_t::impl_t
 
   board_t board;
   board_t opened_board;
+  size_t hidden_left;
   GAME_STATUS status;
 };
 ///
@@ -84,6 +85,7 @@ void board_logic_t::start_new_game()
 ///board_logic_t::impl_t implementation
 board_logic_t::impl_t::impl_t()
   : status(GAME_STATUS::in_progress)
+  , hidden_left(0)
 {
   std::srand(std::time(nullptr));
   start_new_game();
@@ -114,10 +116,13 @@ bool board_logic_t::impl_t::open_field(size_t pos)
      || opened_board[pos] != ELEMENT::hidden) return false;
 
   opened_board[pos] = board[pos];
+  --hidden_left;
 
   if(board[pos] != ELEMENT::empty)
   {
-    if(board[pos] == ELEMENT::bomb) status = GAME_STATUS::lose;
+    if(board[pos] == ELEMENT::bomb)   status = GAME_STATUS::lose;
+    else if(hidden_left == BOMBS_NUM) status = GAME_STATUS::win ;
+
     return true;
   }
 
@@ -141,6 +146,7 @@ void board_logic_t::impl_t::start_new_game()
   status = GAME_STATUS::in_progress;
   board.fill(ELEMENT::empty);
   opened_board.fill(ELEMENT::hidden);
+  hidden_left = board.size();
 
   generate_field();
 }
