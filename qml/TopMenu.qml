@@ -60,8 +60,8 @@ Rectangle
         Image
         {
           anchors.centerIn: button
-          width: button.width - button.border.width
-          height: button.height - button.border.width
+          width: button.width - (button.border.width * 2)
+          height: button.height - (button.border.width * 2)
           property var res: ["res/in_progress.png", "res/win.png", "res/dead.png"]
           source: res[GameWorld.game_status]
         }
@@ -98,8 +98,8 @@ Rectangle
         Image
         {
           anchors.centerIn: button2
-          width: button2.width - button2.border.width
-          height: button2.height - button2.border.width
+          width: button2.width - (button.border.width * 2)
+          height: button2.height - (button.border.width * 2)
           property var res: ["res/bomb.png", "res/flag.png"]
           source: res[GameWorld.click_mode]
         }

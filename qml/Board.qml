@@ -8,10 +8,11 @@ Item
   {
     id: rep
     anchors.fill: board
+    anchors.centerIn: board
     model: GameWorld
 
-    property int el_width: rep.width/15
-    property int el_height: rep.height/20
+    property int el_width: rep.width/20
+    property int el_height: rep.height/23
     Rectangle
     {
       id: rect

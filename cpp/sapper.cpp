@@ -87,6 +87,7 @@ void Sapper::start_new_game()
 {
   impl->start_new_game(*this);
   emit game_statusChanged();
+  emit bombs_leftChanged();
 }
 
 int Sapper::click_mode() const
