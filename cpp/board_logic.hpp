@@ -20,6 +20,7 @@ public:
   board_t get_board() const;
   GAME_STATUS game_status() const;
   void start_new_game();
+  int bombs_left() const;
   //return false if field already open
   bool open_field(const size_t pos);
   bool mark_field(const size_t pos);

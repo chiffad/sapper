@@ -30,9 +30,13 @@ public:
   Q_PROPERTY(int game_status READ game_status NOTIFY game_statusChanged);
   int game_status() const;
 
+  Q_PROPERTY(int bombs_left READ bombs_left NOTIFY bombs_leftChanged);
+  int bombs_left() const;
+
 signals:
   void game_statusChanged();
   void click_modeChanged();
+  void bombs_leftChanged();
 
 private:
   struct impl_t;

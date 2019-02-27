@@ -35,6 +35,7 @@ struct board_logic_t::impl_t
   bool mark_field(size_t pos);
   GAME_STATUS game_status() const;
   void start_new_game();
+  int bombs_left() const;
 
   void generate_field();
   std::vector<coord_t> get_around_coords(const coord_t& c) const;
@@ -43,6 +44,7 @@ struct board_logic_t::impl_t
   board_t opened_board;
   GAME_STATUS status;
   size_t hidden_left;
+  int hidden_bombs;
 };
 ///
 
@@ -79,6 +81,11 @@ void board_logic_t::start_new_game()
 {
   impl->start_new_game();
 }
+
+int board_logic_t::bombs_left() const
+{
+  return impl->bombs_left();
+}
 ///
 
 /////////////////////////////////////////////////////////
@@ -86,6 +93,7 @@ void board_logic_t::start_new_game()
 board_logic_t::impl_t::impl_t()
   : status(GAME_STATUS::in_progress)
   , hidden_left(0)
+  , hidden_bombs(BOMBS_NUM)
 {
   std::srand(std::time(nullptr));
   start_new_game();
@@ -139,6 +147,7 @@ bool board_logic_t::impl_t::mark_field(size_t pos)
   if(opened_board[pos] == ELEMENT::flag)
   {
     LOG_DBG<<"mark from flag to hidden: "<<pos;
+    ++hidden_bombs;
     opened_board[pos] = ELEMENT::hidden;
     return true;
   }
@@ -147,6 +156,7 @@ bool board_logic_t::impl_t::mark_field(size_t pos)
 
   LOG_DBG<<"mark flag: "<<pos;
   opened_board[pos] = ELEMENT::flag;
+  --hidden_bombs;
 
   return true;
 }
@@ -161,9 +171,15 @@ void board_logic_t::impl_t::start_new_game()
   status = GAME_STATUS::in_progress;
   board.fill(ELEMENT::empty);
   opened_board.fill(ELEMENT::hidden);
-  hidden_left = board.size();
+  hidden_left  = board.size();
+  hidden_bombs = BOMBS_NUM;
 
   generate_field();
+}
+
+int board_logic_t::impl_t::bombs_left() const
+{
+  return hidden_bombs;
 }
 
 void board_logic_t::impl_t::generate_field()

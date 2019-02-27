@@ -38,6 +38,7 @@ struct Sapper::impl_t
   void start_new_game(Sapper& list);
   void change_click_mode();
   int game_status() const;
+  int bombs_left() const;
   void update_board(Sapper& list);
 
   board_logic_t board_logic;
@@ -97,6 +98,11 @@ int Sapper::game_status() const
 {
   return impl->game_status();
 }
+
+int Sapper::bombs_left() const
+{
+  return impl->bombs_left();
+}
 ///
 
 /////////////////////////////////////////////////////////
@@ -150,6 +156,7 @@ void Sapper::impl_t::field_clicked(size_t pos, Sapper& list)
   if(mode == CLICK_MODE::mark_bomb)
   {
     if(!board_logic.mark_field(pos)) return;
+    emit list.bombs_leftChanged();
   }
   else if(!board_logic.open_field(pos)) return;
 
@@ -181,6 +188,11 @@ int Sapper::impl_t::click_mode() const
 int Sapper::impl_t::game_status() const
 {
   return board_logic.game_status();
+}
+
+int Sapper::impl_t::bombs_left() const
+{
+  return board_logic.bombs_left();
 }
 
 void Sapper::impl_t::update_board(Sapper& list)

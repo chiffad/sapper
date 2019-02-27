@@ -9,11 +9,43 @@ Rectangle
 
   Row
   {
+    id: row
+    property int size: 3
+
+    Item
+    {
+      id: bombs_counter
+      height: root.height
+      width: root.width/row.size
+
+      Rectangle
+      {
+        id: bomb_count_rect
+        anchors.centerIn: bombs_counter
+        height: bombs_counter.height*(2/3)
+        width: bombs_counter.width/2
+        color: "transparent"
+        border.color: "black"
+        border.width: 1
+
+        Text
+        {
+          anchors.fill: bomb_count_rect
+          verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
+          fontSizeMode: Text.Fit; minimumPixelSize: 10; font.pixelSize: 70
+
+
+          text: '' + GameWorld.bombs_left
+          color: "red"
+        }
+      }
+    }
     Item
     {
       id: game_status
       height: root.height
-      width: root.width/2
+      width: root.width/row.size
 
       Rectangle
       {
@@ -27,7 +59,9 @@ Rectangle
 
         Image
         {
-          anchors.fill: button
+          anchors.centerIn: button
+          width: button.width - button.border.width
+          height: button.height - button.border.width
           property var res: ["res/in_progress.png", "res/win.png", "res/dead.png"]
           source: res[GameWorld.game_status]
         }
@@ -49,7 +83,7 @@ Rectangle
     {
       id: click_mode
       height: root.height
-      width: root.width/2
+      width: root.width/row.size
 
       Rectangle
       {
@@ -63,7 +97,9 @@ Rectangle
 
         Image
         {
-          anchors.fill: button2
+          anchors.centerIn: button2
+          width: button2.width - button2.border.width
+          height: button2.height - button2.border.width
           property var res: ["res/bomb.png", "res/flag.png"]
           source: res[GameWorld.click_mode]
         }
