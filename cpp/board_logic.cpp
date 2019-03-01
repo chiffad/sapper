@@ -6,6 +6,9 @@
 #include <vector>
 #include <utility>
 
+#include <iostream>
+#include <fstream>
+
 
 #ifdef DEBUG_ON
 #include <string>
@@ -30,6 +33,7 @@ namespace sapper
 struct board_logic_t::impl_t
 {
   impl_t();
+  ~impl_t();
   board_t get_board() const;
   bool open_field(size_t pos);
   bool mark_field(size_t pos);
@@ -39,6 +43,8 @@ struct board_logic_t::impl_t
 
   void generate_field();
   std::vector<coord_t> get_around_coords(const coord_t& c) const;
+  void save_game() const;
+  bool load_game();
 
   board_t board;
   board_t opened_board;
@@ -96,7 +102,7 @@ board_logic_t::impl_t::impl_t()
   , hidden_bombs(BOMBS_NUM)
 {
   std::srand(std::time(nullptr));
-  start_new_game();
+  if(!load_game()) start_new_game();
 
 #ifdef DEBUG_ON
   std::string str;
@@ -111,6 +117,11 @@ board_logic_t::impl_t::impl_t()
   }
   LOG_DBG<<str;
 #endif
+}
+
+board_logic_t::impl_t::~impl_t()
+{
+  save_game();
 }
 
 board_t board_logic_t::impl_t::get_board() const
@@ -215,6 +226,44 @@ std::vector<coord_t> board_logic_t::impl_t::get_around_coords(const coord_t& c) 
   return cs;
 }
 
+void board_logic_t::impl_t::save_game() const
+{
+  std::ofstream outdata;
+  outdata.open("board.save");
+  if(!outdata)
+  {
+    LOG_DBG<<"Error: file could not be opened";
+    return;
+  }
+
+  for(auto el : board) outdata<<static_cast<char>(el);
+  outdata<<std::endl;
+
+  for(auto el : opened_board) outdata<<static_cast<char>(el);
+  outdata<<std::endl;
+}
+
+bool board_logic_t::impl_t::load_game()
+{
+  std::ifstream is("board.save");
+
+  if(!is)
+  {
+    LOG_DBG<<"Error: file could not be opened";
+    return false;
+  }
+
+  std::array<char, FIELD_SIZE> tmp;
+  if(is.getline(tmp.data(), FIELD_SIZE))
+  {
+    for(size_t i = 0; i < FIELD_SIZE; ++i) board[i] = static_cast<ELEMENT>(tmp[i]);
+
+    is.getline(tmp.data(), tmp.size());
+    for(size_t i = 0; i < FIELD_SIZE; ++i) opened_board[i] = static_cast<ELEMENT>(tmp[i]);
+  }
+
+  return true;
+}
 ///
 
 }// namespace sapper

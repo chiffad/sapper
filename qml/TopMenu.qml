@@ -25,7 +25,7 @@ Rectangle
         height: bombs_counter.height*(2/3)
         width: bombs_counter.width/2
         color: "transparent"
-        border.color: "black"
+        border.color: "gray"
         border.width: 1
 
         Text
@@ -54,7 +54,7 @@ Rectangle
         height: game_status.height/2
         width: height
         color: "transparent"
-        border.color: "black"
+        border.color: "grey"
         border.width: 1
 
         Image
@@ -92,7 +92,7 @@ Rectangle
         height: click_mode.height/2
         width: height
         color: "transparent"
-        border.color: "black"
+        border.color: "gray"
         border.width: 1
 
         Image
