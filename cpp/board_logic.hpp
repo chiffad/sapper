@@ -18,7 +18,7 @@ public:
   ~board_logic_t();
 
   board_t get_board() const;
-  GAME_STATUS game_status() const;
+  GAME_STATUS status() const;
   void start_new_game();
   int bombs_left() const;
   //return false if field already open

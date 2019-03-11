@@ -169,7 +169,7 @@ void Sapper::impl_t::field_clicked(size_t pos, Sapper& list)
 
   update_board(list);
 
-  if(board_logic.game_status() != board_logic_t::GAME_STATUS::in_progress) emit list.game_statusChanged();
+  if(board_logic.status() != board_logic_t::GAME_STATUS::in_progress) emit list.game_statusChanged();
 }
 
 void Sapper::impl_t::change_click_mode()
@@ -194,7 +194,7 @@ int Sapper::impl_t::click_mode() const
 
 int Sapper::impl_t::game_status() const
 {
-  return board_logic.game_status();
+  return board_logic.status();
 }
 
 int Sapper::impl_t::bombs_left() const

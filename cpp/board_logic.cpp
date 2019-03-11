@@ -5,16 +5,13 @@
 #include <ctime>
 #include <vector>
 #include <utility>
+#include <string>
 
 #include <iostream>
 #include <fstream>
 
 #include <QStandardPaths>
 #include <QDir>
-
-#ifdef DEBUG_ON
-#include <string>
-#endif
 
 
 namespace
@@ -39,7 +36,7 @@ struct board_logic_t::impl_t
   board_t get_board() const;
   bool open_field(size_t pos);
   bool mark_field(size_t pos);
-  GAME_STATUS game_status() const;
+  GAME_STATUS status() const;
   void start_new_game();
   int bombs_left() const;
 
@@ -50,9 +47,9 @@ struct board_logic_t::impl_t
 
   board_t board;
   board_t opened_board;
-  GAME_STATUS status;
-  size_t hidden_left;
-  int hidden_bombs;
+  GAME_STATUS game_status;
+  size_t hidden_fields;
+  size_t hidden_bombs;
   std::string save_path;
 };
 ///
@@ -81,9 +78,9 @@ bool board_logic_t::mark_field(const size_t pos)
   return impl->mark_field(pos);
 }
 
-GAME_STATUS board_logic_t::game_status() const
+GAME_STATUS board_logic_t::status() const
 {
-  return impl->game_status();
+  return impl->status();
 }
 
 void board_logic_t::start_new_game()
@@ -105,8 +102,8 @@ void board_logic_t::save_game() const
 /////////////////////////////////////////////////////////
 ///board_logic_t::impl_t implementation
 board_logic_t::impl_t::impl_t()
-  : status(GAME_STATUS::in_progress)
-  , hidden_left(0)
+  : game_status(GAME_STATUS::in_progress)
+  , hidden_fields(0)
   , hidden_bombs(BOMBS_NUM)
   , save_path(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation).value(0).toUtf8().constData())
 {
@@ -145,16 +142,16 @@ board_t board_logic_t::impl_t::get_board() const
 
 bool board_logic_t::impl_t::open_field(size_t pos)
 {
-  if(status != GAME_STATUS::in_progress
+  if(game_status != GAME_STATUS::in_progress
      || opened_board[pos] != ELEMENT::hidden) return false;
 
   opened_board[pos] = board[pos];
-  --hidden_left;
+  --hidden_fields;
 
   if(board[pos] != ELEMENT::empty)
   {
-    if(board[pos] == ELEMENT::bomb)   status = GAME_STATUS::lose;
-    else if(hidden_left == BOMBS_NUM) status = GAME_STATUS::win ;
+    if(board[pos] == ELEMENT::bomb)     game_status = GAME_STATUS::lose;
+    else if(hidden_fields == BOMBS_NUM) game_status = GAME_STATUS::win ;
 
     return true;
   }
@@ -167,7 +164,7 @@ bool board_logic_t::impl_t::open_field(size_t pos)
 bool board_logic_t::impl_t::mark_field(size_t pos)
 {
   LOG_DBG<<"try_to_mark: "<<pos;
-  if(status != GAME_STATUS::in_progress) return false;
+  if(game_status != GAME_STATUS::in_progress) return false;
 
   if(opened_board[pos] == ELEMENT::flag)
   {
@@ -186,18 +183,18 @@ bool board_logic_t::impl_t::mark_field(size_t pos)
   return true;
 }
 
-GAME_STATUS board_logic_t::impl_t::game_status() const
+GAME_STATUS board_logic_t::impl_t::status() const
 {
-  return status;
+  return game_status;
 }
 
 void board_logic_t::impl_t::start_new_game()
 {
   LOG_DBG;
-  status = GAME_STATUS::in_progress;
+  game_status = GAME_STATUS::in_progress;
   board.fill(ELEMENT::empty);
   opened_board.fill(ELEMENT::hidden);
-  hidden_left  = board.size();
+  hidden_fields = board.size();
   hidden_bombs = BOMBS_NUM;
 
   generate_field();
@@ -247,11 +244,12 @@ void board_logic_t::impl_t::save_game() const
   const auto file = save_path + "/save.data";
   outdata.open(file, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
 
+  for(auto el : opened_board) outdata<<static_cast<char>(el);
+  outdata<<std::endl;
+
   for(auto el : board) outdata<<static_cast<char>(el);
   outdata<<std::endl;
 
-  for(auto el : opened_board) outdata<<static_cast<char>(el);
-  outdata<<std::endl;
   LOG_DBG<<"data saved";
 }
 
@@ -262,7 +260,7 @@ bool board_logic_t::impl_t::load_game()
 
   if(!is)
   {
-    LOG_DBG<<"Error: file could not be opened";
+    LOG_DBG<<"File could not be opened!";
     return false;
   }
 
@@ -270,11 +268,7 @@ bool board_logic_t::impl_t::load_game()
   {
     std::string str;
     str.reserve(FIELD_SIZE);
-    if(!std::getline(is, str))
-    {
-      LOG_DBG<<"fail to load!";
-      return false;
-    }
+    if(!std::getline(is, str)) return false;
 
     for(size_t i = 0; i < FIELD_SIZE; ++i)
     {
@@ -284,7 +278,20 @@ bool board_logic_t::impl_t::load_game()
     return true;
   };
 
-  return fill_board(board) && fill_board(opened_board);
+  const bool open_board_filled = fill_board(opened_board);
+  for(const auto el : opened_board)
+  {
+    switch(el)
+    {
+      case ELEMENT::bomb  : game_status = GAME_STATUS::lose; break;
+      case ELEMENT::hidden: ++hidden_fields;                 break;
+      case ELEMENT::flag  : --hidden_bombs ;                 break;
+      default: break;
+    }
+  }
+  if(hidden_fields <= BOMBS_NUM) game_status = GAME_STATUS::win;
+
+  return open_board_filled && fill_board(board);
 }
 ///
 
