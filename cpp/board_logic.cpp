@@ -44,6 +44,8 @@ struct board_logic_t::impl_t
   std::vector<coord_t> get_around_coords(const coord_t& c) const;
   void save_game() const;
   bool load_game();
+  void update_field_related_data();
+
 
   board_t board;
   board_t opened_board;
@@ -191,13 +193,8 @@ GAME_STATUS board_logic_t::impl_t::status() const
 void board_logic_t::impl_t::start_new_game()
 {
   LOG_DBG;
-  game_status = GAME_STATUS::in_progress;
-  board.fill(ELEMENT::empty);
-  opened_board.fill(ELEMENT::hidden);
-  hidden_fields = board.size();
-  hidden_bombs = BOMBS_NUM;
-
   generate_field();
+  update_field_related_data();
 }
 
 int board_logic_t::impl_t::bombs_left() const
@@ -207,6 +204,9 @@ int board_logic_t::impl_t::bombs_left() const
 
 void board_logic_t::impl_t::generate_field()
 {
+  board.fill(ELEMENT::empty);
+  opened_board.fill(ELEMENT::hidden);
+
   for(int i = 0; i < BOMBS_NUM; ++i)
   {
     size_t pos = get_random_field();
@@ -278,20 +278,31 @@ bool board_logic_t::impl_t::load_game()
     return true;
   };
 
-  const bool open_board_filled = fill_board(opened_board);
+  const bool res = fill_board(opened_board) && fill_board(board);
+  update_field_related_data();
+
+  return res;
+}
+
+void board_logic_t::impl_t::update_field_related_data()
+{
+  hidden_bombs  = 0;
+  hidden_fields = 0;
+  game_status   = GAME_STATUS::in_progress;
+
+  for(const auto el : board)
+  {
+    if(el == ELEMENT::bomb) ++hidden_bombs;
+  }
+
   for(const auto el : opened_board)
   {
-    switch(el)
-    {
-      case ELEMENT::bomb  : game_status = GAME_STATUS::lose; break;
-      case ELEMENT::hidden: ++hidden_fields;                 break;
-      case ELEMENT::flag  : --hidden_bombs ;                 break;
-      default: break;
-    }
+    if(el == ELEMENT::bomb) game_status = GAME_STATUS::lose;
+    else if(el == ELEMENT::hidden) ++hidden_fields;
+    else if(el == ELEMENT::flag) --hidden_bombs;
   }
-  if(hidden_fields <= BOMBS_NUM) game_status = GAME_STATUS::win;
 
-  return open_board_filled && fill_board(board);
+  if(hidden_fields <= BOMBS_NUM) game_status = GAME_STATUS::win;
 }
 ///
 
