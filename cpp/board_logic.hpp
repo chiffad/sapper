@@ -24,6 +24,7 @@ public:
   //return false if field already open
   bool open_field(const size_t pos);
   bool mark_field(const size_t pos);
+  void save_game() const;
 
 
 private:

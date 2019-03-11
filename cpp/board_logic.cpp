@@ -9,6 +9,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <QStandardPaths>
+#include <QDir>
 
 #ifdef DEBUG_ON
 #include <string>
@@ -51,6 +53,7 @@ struct board_logic_t::impl_t
   GAME_STATUS status;
   size_t hidden_left;
   int hidden_bombs;
+  std::string save_path;
 };
 ///
 
@@ -92,6 +95,11 @@ int board_logic_t::bombs_left() const
 {
   return impl->bombs_left();
 }
+
+void board_logic_t::save_game() const
+{
+  impl->save_game();
+}
 ///
 
 /////////////////////////////////////////////////////////
@@ -100,8 +108,14 @@ board_logic_t::impl_t::impl_t()
   : status(GAME_STATUS::in_progress)
   , hidden_left(0)
   , hidden_bombs(BOMBS_NUM)
+  , save_path(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation).value(0).toUtf8().constData())
 {
   std::srand(std::time(nullptr));
+
+  LOG_DBG<<"Save game path:"<<save_path;
+  QDir dir(save_path.c_str());
+  if(!dir.exists() && !dir.mkpath(save_path.c_str())) LOG_DBG<<"Error: folder could not be created";
+
   if(!load_game()) start_new_game();
 
 #ifdef DEBUG_ON
@@ -179,6 +193,7 @@ GAME_STATUS board_logic_t::impl_t::game_status() const
 
 void board_logic_t::impl_t::start_new_game()
 {
+  LOG_DBG;
   status = GAME_STATUS::in_progress;
   board.fill(ELEMENT::empty);
   opened_board.fill(ELEMENT::hidden);
@@ -228,24 +243,22 @@ std::vector<coord_t> board_logic_t::impl_t::get_around_coords(const coord_t& c) 
 
 void board_logic_t::impl_t::save_game() const
 {
-  std::ofstream outdata;
-  outdata.open("board.save");
-  if(!outdata)
-  {
-    LOG_DBG<<"Error: file could not be opened";
-    return;
-  }
+  std::fstream outdata;
+  const auto file = save_path + "/save.data";
+  outdata.open(file, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
 
   for(auto el : board) outdata<<static_cast<char>(el);
   outdata<<std::endl;
 
   for(auto el : opened_board) outdata<<static_cast<char>(el);
   outdata<<std::endl;
+  LOG_DBG<<"data saved";
 }
 
 bool board_logic_t::impl_t::load_game()
 {
-  std::ifstream is("board.save");
+  LOG_DBG<<"Try to load game";
+  std::ifstream is(save_path + "/save.data");
 
   if(!is)
   {
@@ -253,16 +266,25 @@ bool board_logic_t::impl_t::load_game()
     return false;
   }
 
-  std::array<char, FIELD_SIZE> tmp;
-  if(is.getline(tmp.data(), FIELD_SIZE))
+  auto fill_board = [&is](board_t& b)
   {
-    for(size_t i = 0; i < FIELD_SIZE; ++i) board[i] = static_cast<ELEMENT>(tmp[i]);
+    std::string str;
+    str.reserve(FIELD_SIZE);
+    if(!std::getline(is, str))
+    {
+      LOG_DBG<<"fail to load!";
+      return false;
+    }
 
-    is.getline(tmp.data(), tmp.size());
-    for(size_t i = 0; i < FIELD_SIZE; ++i) opened_board[i] = static_cast<ELEMENT>(tmp[i]);
-  }
+    for(size_t i = 0; i < FIELD_SIZE; ++i)
+    {
+      if(!valid_ELEMENT(str[i])) return false;
+      b[i] = static_cast<ELEMENT>(str[i]);
+    }
+    return true;
+  };
 
-  return true;
+  return fill_board(board) && fill_board(opened_board);
 }
 ///
 

@@ -20,6 +20,26 @@ enum class ELEMENT {hidden = 'h', bomb  = 'b', flag  = 'f',
                     six    = '6', seven = '7', eight = '8' };
 using board_t = std::array<ELEMENT, FIELD_SIZE>;
 
+inline bool valid_ELEMENT(const size_t el)
+{
+  switch(static_cast<ELEMENT>(el))
+  {
+    case ELEMENT::hidden:
+    case ELEMENT::empty :
+    case ELEMENT::three :
+    case ELEMENT::six   :
+    case ELEMENT::bomb  :
+    case ELEMENT::one   :
+    case ELEMENT::four  :
+    case ELEMENT::seven :
+    case ELEMENT::flag  :
+    case ELEMENT::two   :
+    case ELEMENT::five  :
+    case ELEMENT::eight : return true;
+    default: return false;
+  }
+}
+
 struct coord_t
 {
   int x;

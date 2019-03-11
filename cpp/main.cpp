@@ -1,22 +1,19 @@
 #include "board_logic.hpp"
-#include "sapper.hpp"
+#include "qguiapplicationmy.hpp"
 
-#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QtQuick/QQuickView>
 
-#include <QDebug>
 
 int main(int argc, char *argv[])
 {
+  sapper::QGuiApplicationMy app(argc, argv);
+
   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-  QGuiApplication app(argc, argv);
-
-  sapper::Sapper game;
   QQmlApplicationEngine engine;
-  engine.rootContext()->setContextProperty("GameWorld", &game);
+  engine.rootContext()->setContextProperty("GameWorld", &app.game);
   engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
   if(engine.rootObjects().isEmpty()) return -1;

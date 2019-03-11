@@ -1,6 +1,7 @@
 QT += quick core
 CONFIG += c++17
 
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Refer to the documentation for the
@@ -14,15 +15,16 @@ DEFINES += QT_DEPRECATED_WARNINGS \
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        cpp/sapper.cpp \
+        cpp/sapper.cpp            \
         cpp/board_logic.cpp       \
         cpp/main.cpp              \
 
 HEADERS += \
-        cpp/sapper.hpp \
+        cpp/sapper.hpp            \
         cpp/board_logic.hpp       \
         cpp/helper.hpp            \
         cpp/logger.hpp            \
+        cpp/qguiapplicationmy.hpp \
 
 
 

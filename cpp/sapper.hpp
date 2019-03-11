@@ -33,6 +33,9 @@ public:
   Q_PROPERTY(int bombs_left READ bombs_left NOTIFY bombs_leftChanged);
   int bombs_left() const;
 
+public:
+  void save_game() const;
+
 signals:
   void game_statusChanged();
   void click_modeChanged();

@@ -40,6 +40,7 @@ struct Sapper::impl_t
   int game_status() const;
   int bombs_left() const;
   void update_board(Sapper& list);
+  void save_game() const;
 
   board_logic_t board_logic;
   CLICK_MODE mode;
@@ -103,6 +104,11 @@ int Sapper::game_status() const
 int Sapper::bombs_left() const
 {
   return impl->bombs_left();
+}
+
+void Sapper::save_game() const
+{
+  impl->save_game();
 }
 ///
 
@@ -213,6 +219,10 @@ void Sapper::impl_t::update_board(Sapper& list)
   }
 }
 
+void Sapper::impl_t::save_game() const
+{
+  board_logic.save_game();
+}
 ///
 
 
